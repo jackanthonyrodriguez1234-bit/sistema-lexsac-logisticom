@@ -3,78 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Fotocheck Digital</title>
+    <title>Ficha de Identificación Digital</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f0f4f8;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
+        
+        /* Contenedor Principal Estilo Tarjeta */
         .card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 320px;
-            padding: 25px;
-            text-align: center;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 410px;
+            overflow: hidden;
             display: none; /* Se muestra solo si encuentra al trabajador */
+            padding-bottom: 25px;
+            position: relative;
         }
+
+        /* Cabecera Oscura */
+        .header-bg {
+            background: linear-gradient(135deg, #0f2b33 0%, #1a3a42 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 15px 75px 15px;
+            position: relative;
+        }
+        
+        /* Logo de la empresa flotante dentro de la cabecera */
         .logo-empresa {
-            height: 60px;
-            margin-bottom: 15px;
+            height: 45px;
+            max-width: 160px;
             object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .header-bg .subtitulo {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #61b390;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        .header-bg .titulo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contenedor de la Foto con círculo de estado */
+        .foto-container {
+            width: 130px;
+            height: 130px;
+            margin: -65px auto 15px auto;
+            position: relative;
+            z-index: 2;
         }
         .foto-perfil {
-            width: 140px;
-            height: 170px;
-            border-radius: 8px;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #003366;
-            margin-bottom: 15px;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            background-color: white;
         }
-        h2 {
-            margin: 10px 0 5px 0;
-            color: #333;
-            font-size: 1.3em;
+        .status-dot {
+            width: 18px;
+            height: 18px;
+            background-color: #2ecc71;
+            border: 3px solid white;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .dni {
-            color: #666;
-            font-weight: bold;
-            margin-bottom: 5px;
+
+        /* Nombre y Cargo */
+        .info-principal {
+            text-align: center;
+            padding: 0 20px;
         }
-        .area {
+        .info-principal h2 {
+            font-size: 1.35rem;
+            color: #111;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .tag-area {
             display: inline-block;
-            background-color: #003366;
-            color: white;
-            padding: 5px 15px;
+            background-color: #e6f7f0;
+            color: #1abc9c;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 0.9em;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #d1f2e5;
             margin-bottom: 20px;
         }
+
+        /* Bloques de Datos Metódicos */
+        .seccion-datos {
+            padding: 0 20px;
+            margin-bottom: 15px;
+        }
+        .seccion-titulo {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            padding-left: 5px;
+        }
+        .bloque-gris {
+            background-color: #f8fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 14px;
+            padding: 12px 15px;
+        }
+        
+        /* Sistema de Rejilla (2 columnas) */
+        .grid-2 {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .grid-2:last-child {
+            margin-bottom: 0;
+        }
+        .dato-item {
+            flex: 1;
+        }
+        .dato-label {
+            font-size: 0.65rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .dato-valor {
+            font-size: 0.85rem;
+            color: #2d3748;
+            font-weight: 700;
+        }
+        .dato-valor.resaltado {
+            color: #2b6cb0;
+        }
+
+        /* Línea Divisoria Intermitente */
+        .divider {
+            border-top: 1px dashed #cbd5e0;
+            margin: 20px;
+        }
+
+        /* Código de Barras Imborrable */
+        .barcode-box {
+            text-align: center;
+            padding: 0 20px;
+        }
+        .barcode-img {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 2px;
+        }
+        .barcode-sub {
+            font-size: 0.65rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Botón de Enlace Dinámico MTC */
+        .mtc-box {
+            padding: 0 20px;
+            margin-top: 15px;
+            text-align: center;
+        }
         .btn-mtc {
-            display: none; /* Se activa dinámicamente solo para Conductores */
-            background-color: #d9534f;
+            display: none;
+            background-color: #e53e3e;
             color: white;
             text-decoration: none;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 10px;
             font-weight: bold;
-            transition: background 0.3s;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(229, 62, 62, 0.2);
         }
         .btn-mtc:hover {
-            background-color: #c9302c;
+            background-color: #c53030;
         }
+
+        /* Mensaje de Error */
         .error-msg {
-            color: red;
+            color: #e53e3e;
             display: none;
             font-weight: bold;
             background: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
     </style>
@@ -84,63 +229,141 @@
     <div id="errorCard" class="error-msg">Trabajador no encontrado o enlace inválido.</div>
 
     <div id="personalCard" class="card">
-        <!-- Logo de la Empresa (Dinámico) -->
-        <img id="logoEmpresa" src="" alt="Logo Empresa" class="logo-empresa">
-        <br>
-        <!-- Foto del Trabajador o Silueta -->
-        <img id="userFoto" src="" alt="Foto Personal" class="foto-perfil">
         
-        <!-- Datos del Personal -->
-        <h2 id="nombreTxt"></h2>
-        <p id="dniTxt" class="dni"></p>
-        <span id="areaTxt" class="area"></span>
-        
-        <br><br>
-        <!-- Botón para Licencia MTC -->
-        <a id="linkPDF" href="#" target="_blank" class="btn-mtc">VER DOCUMENTO MTC</a>
+        <div class="header-bg">
+            <img id="logoEmpresa" src="" alt="Logo Empresa" class="logo-empresa"><br>
+            <p class="subtitulo">Sistema de Control Interno</p>
+            <h1 class="titulo">FICHA DE IDENTIFICACIÓN</h1>
+        </div>
+
+        <div class="foto-container">
+            <img id="userFoto" src="" alt="Foto Personal" class="foto-perfil">
+            <div class="status-dot"></div>
+        </div>
+
+        <div class="info-principal">
+            <h2 id="nombreTxt"></h2>
+            <span id="areaTxt" class="tag-area"></span>
+        </div>
+
+        <div class="seccion-datos">
+            <div class="seccion-titulo">Datos de Identidad Personal</div>
+            <div class="bloque-gris">
+                <div class="grid-2">
+                    <div class="dato-item">
+                        <div class="dato-label">N° de Documento (DNI)</div>
+                        <div id="dniTxt" class="dato-valor resaltado"></div>
+                    </div>
+                    <div class="dato-item">
+                        <div class="dato-label">Fecha de Nacimiento</div>
+                        <div id="nacimientoTxt" class="dato-valor"></div>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 8px;">
+                    <div class="dato-item">
+                        <div class="dato-label">Correo Electrónico Oficial</div>
+                        <div id="correoTxt" class="dato-valor" style="font-size: 0.8rem; text-transform: lowercase;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="bloqueMTC" class="seccion-datos" style="display: none;">
+            <div class="seccion-titulo">Registro de Conductor MTC</div>
+            <div class="bloque-gris">
+                <div class="grid-2">
+                    <div class="dato-item">
+                        <div class="dato-label">N° de Licencia</div>
+                        <div id="licenciaTxt" class="dato-valor resaltado"></div>
+                    </div>
+                    <div class="dato-item">
+                        <div class="dato-label">Clase y Categoría</div>
+                        <div id="categoriaTxt" class="dato-valor"></div>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 8px;">
+                    <div class="dato-item">
+                        <div class="dato-label">Expedición</div>
+                        <div id="expedicionTxt" class="dato-valor"></div>
+                    </div>
+                    <div class="dato-item">
+                        <div class="dato-label">Revalidación (Vence)</div>
+                        <div id="venceTxt" class="dato-valor" style="color: #c53030;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="seccion-datos">
+            <div class="seccion-titulo">Seguridad y Salud Ocupacional</div>
+            <div class="bloque-gris">
+                <div class="grid-2">
+                    <div class="dato-item">
+                        <div class="dato-label">Grupo Sanguíneo</div>
+                        <div id="sangreTxt" class="dato-valor"></div>
+                    </div>
+                    <div class="dato-item">
+                        <div class="dato-label">Restricciones</div>
+                        <div id="restriccionesTxt" class="dato-valor" style="color: #2f855a;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mtc-box">
+            <a id="linkPDF" href="#" target="_blank" class="btn-mtc">VER DOCUMENTO MTC</a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="barcode-box">
+            <img id="barcodeImg" src="" alt="Código de Barras" class="barcode-img">
+            <div class="barcode-sub">Escaneo Digital de Seguridad</div>
+        </div>
+
     </div>
 
     <script>
-        // BASE DE DATOS OFICIAL (LOGISTICOM Y LEXSAC)
+        // BASE DE DATOS COMPLETA DE PERSONAL DESDE EXCEL
         const personal = [
             // --- LOGISTICOM ---
-            { dni: "9515529", nombre: "JOSE ANTONIO ALVARADO TURFO", area: "Auxiliar", empresa: "LOGISTICOM" },
-            { dni: "76788427", nombre: "WILDER MARLON DURAND BRAVO", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "77042708", nombre: "EMERSON OMAR MARAPARA PINEDO", area: "Auxiliar", empresa: "LOGISTICOM" },
-            { dni: "47536970", nombre: "HELBERT MOZOMBITE CHOTA", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "75909419", nombre: "HENRY DEREX REATEGUI PANIURIA", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "46395482", nombre: "EVERTH LUIS VARGAS MENDIETA", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "48062167", nombre: "BRAYAN EDUARDO VASQUEZ DELGADILLO", area: "Auxiliar", empresa: "LOGISTICOM" },
-            { dni: "41707671", nombre: "JONATHAN VENEGAS CHINCHAYAN", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "45768559", nombre: "ROGER ANTONIO CAMACHO LEON", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "25841129", nombre: "DANIEL GERSON MENDOZA MORENO", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "43997881", nombre: "MARLON TRAUCO NOLORBE", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "41750580", nombre: "ALEX HUMBERTO BARDALES DIAZ", area: "Operaciones", empresa: "LOGISTICOM" },
-            { dni: "74720411", nombre: "GABRIELA CUSTODIO ARONI", area: "SSOMA", empresa: "LOGISTICOM" },
-            { dni: "71149176", nombre: "KENNETH JAEL FUENTES NAVARRO", area: "Operaciones", empresa: "LOGISTICOM" },
-            { dni: "41684499", nombre: "JOSE ANTONIO RIVERA URBANO", area: "Conductor", empresa: "LOGISTICOM" },
-            { dni: "77488694", nombre: "ROSA MARGARITA RODRIGUEZ YACOLCA", area: "Administracion", empresa: "LOGISTICOM" },
-            { dni: "72767435", nombre: "CARLO MARIO SALVADOR BAUTISTA", area: "Operaciones", empresa: "LOGISTICOM" },
-            { dni: "75793059", nombre: "JURY VIVIANA VARGAS MOZOMBITE", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "9515529", nombre: "JOSE ANTONIO ALVARADO TURFO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "alvaradoturfojoseantonio119@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "76788427", nombre: "WILDER MARLON DURAND BRAVO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "wildermarlond@gmail.com", licencia: "Q76788427", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "77042708", nombre: "EMERSON OMAR MARAPARA PINEDO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "emersonmarapara192@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "47536970", nombre: "HELBERT MOZOMBITE CHOTA", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "chevymozombite@gmail.com", licencia: "Q47536970", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "75909419", nombre: "HENRY DEREX REATEGUI PANIURIA", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "henryderexr@gmail.com", licencia: "Q75909419", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "46395482", nombre: "EVERTH LUIS VARGAS MENDIETA", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "25/05/1990", correo: "everth.luis1990@gmail.com", licencia: "Q46395482", categoria: "A Clase IIIc", expedicion: "19/03/2019", vence: "23/02/2029", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "48062167", nombre: "BRAYAN EDUARDO VASQUEZ DELGADILLO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "bveduar96@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "41707671", nombre: "JONATHAN VENEGAS CHINCHAYAN", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "jonathansmithvenegas@gmail.com", licencia: "Q41707671", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "45768559", nombre: "ROGER ANTONIO CAMACHO LEON", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "rogercamachole22@gmail.com", licencia: "Q45768559", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "25841129", nombre: "DANIEL GERSON MENDOZA MORENO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "daniel.mendoza0403@gmail.com", licencia: "Q25841129", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "43997881", nombre: "MARLON TRAUCO NOLORBE", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "marlontrauconolorbe58@gmail.com", licencia: "Q43997881", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "41750580", nombre: "ALEX HUMBERTO BARDALES DIAZ", area: "JEFE DE Operaciones", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "74720411", nombre: "GABRIELA CUSTODIO ARONI", area: "SSOMA", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "71149176", nombre: "KENNETH JAEL FUENTES NAVARRO", area: "AREA COMERCIAL", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "41684499", nombre: "JOSE ANTONIO RIVERA URBANO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "Q41684499", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "77488694", nombre: "ROSA MARGARITA RODRIGUEZ YACOLCA", area: "GERENTE", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "72767435", nombre: "CARLO MARIO SALVADOR BAUTISTA", area: "ASIS. ADMINISTRATIVO", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "75793059", nombre: "JURY VIVIANA VARGAS MOZOMBITE", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
 
             // --- LEXSAC ---
-            { dni: "72325162", nombre: "ZE WRELINTON LIRA SILVANO", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "76067095", nombre: "VEXLER ALEXANDER AREVALO AHUE", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "71133202", nombre: "JOSE URIEL CATASHUNGA PINCHI", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "7162730", nombre: "JESUS EDUARDO ALACHE ALVA", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "44216410", nombre: "ARLES LIRA CARDENAS", area: "Conductor", empresa: "LEXSAC" },
-            { dni: "74690292", nombre: "LANDER OMAR PEÑA BENITES", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "75771843", nombre: "ALEGRIA CHAVEZ ALICIA DEL PILAR", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "61725804", nombre: "ARIMUYA SILVANO ERBES", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "60667939", nombre: "JACK ANTHONY RODRIGUEZ CATASHUNGA", area: "Operaciones", empresa: "LEXSAC" },
-            { dni: "76847595", nombre: "JOSE ROGER DIAZ MONSALVE", area: "Conductor", empresa: "LEXSAC" },
-            { dni: "77219118", nombre: "MARAPARA PINEDO CARLOS ABEL", area: "Auxiliar", empresa: "LEXSAC" },
-            { dni: "42108352", nombre: "MURGA AYAY ELISA YUBEHT", area: "Operaciones", empresa: "LEXSAC" },
-            { dni: "46998713", nombre: "RODRIGUEZ BARDALES DIANA ELVIRA", area: "Operaciones", empresa: "LEXSAC" },
-            { dni: "80124743", nombre: "RODRIGUEZ BARDALES JULIO CESAR", area: "Administracion", empresa: "LEXSAC" },
-            { dni: "47192206", nombre: "RODRIGUEZ BARDALES SARA ROCIO", area: "Operaciones", empresa: "LEXSAC" },
-            { dni: "46407053", nombre: "RODRIGUEZ BARDALES SEGUNDO ROSARIO", area: "Conductor", empresa: "LEXSAC" },
-            { dni: "47594889", nombre: "PEÑA BENITES JHACSON LUIS", area: "Auxiliar", empresa: "LEXSAC" }
+            { dni: "72325162", nombre: "ZE WRELINTON LIRA SILVANO", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "taurolira@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "76067095", nombre: "VEXLER ALEXANDER AREVALO AHUE", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "alex04arevaloahue@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "71133202", nombre: "JOSE URIEL CATASHUNGA PINCHI", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "catashungapinchiuriel@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "7162730", nombre: "JESUS EDUARDO ALACHE ALVA", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "jeal1610@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "44216410", nombre: "ARLES LIRA CARDENAS", area: "Conductor", empresa: "LEXSAC", nacimiento: "---", correo: "princilira@gmail.com", licencia: "Q44216410", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "74690292", nombre: "LANDER OMAR PEÑA BENITES", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "landerpena817@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "75771843", nombre: "ALEGRIA CHAVEZ ALICIA DEL PILAR", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "aliciadelpilaralegria24@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "61725804", nombre: "ARIMUYA SILVANO ERBES", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "60667939", nombre: "CATASHUNGA RODRIGUEZ JACK ANTHONY", area: "ASIST. DE Operaciones", empresa: "LEXSAC", nacimiento: "22/05/2000", correo: "jackanthonyrodriguez1234@gmail.com", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "76847595", nombre: "DIAZ MONSALVE JOSE ROGER", area: "Conductor", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "Q76847595", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "77219118", nombre: "MARAPARA PINEDO CARLOS ABEL", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "42108352", nombre: "MURGA AYAY ELISA YUBEHT", area: "ASIST. CONTABLE", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "46998713", nombre: "RODRIGUEZ BARDALES DIANA ELVIRA", area: "ASIST. ADMINISTRATIVO", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "80124743", nombre: "RODRIGUEZ BARDALES JULIO CESAR", area: "GERENTE", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "47192206", nombre: "RODRIGUEZ BARDALES SARA ROCIO", area: "JEFE DE OPERACIONES", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "46407053", nombre: "RODRIGUEZ BARDALES SEGUNDO ROSARIO", area: "Conductor", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "Q46407053", categoria: "A Clase IIIc", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" },
+            { dni: "47594889", nombre: "PEÑA BENITES JHACSON LUIS", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---", expedicion: "---", vence: "---", sangre: "O+ (O Positivo)", restricciones: "Ninguna" }
         ];
 
         function inicializarSistema() {
@@ -157,27 +380,51 @@
             if (empleado) {
                 document.getElementById('personalCard').style.display = "block";
                 
+                // Mapeo de campos de texto
                 document.getElementById('nombreTxt').innerText = empleado.nombre;
-                document.getElementById('dniTxt').innerText = "DNI: " + empleado.dni;
-                document.getElementById('areaTxt').innerText = empleado.area.toUpperCase();
+                document.getElementById('areaTxt').innerText = empleado.area;
+                document.getElementById('dniTxt').innerText = empleado.dni;
+                document.getElementById('nacimientoTxt').innerText = empleado.nacimiento;
+                document.getElementById('correoTxt').innerText = empleado.correo;
+                document.getElementById('sangreTxt').innerText = empleado.sangre;
+                document.getElementById('restriccionesTxt').innerText = empleado.restricciones;
 
-                // Se adapta dinámicamente al nombre actual de tus archivos en la barra lateral
-                document.getElementById('logoEmpresa').src = (empleado.empresa === "LEXSAC") ? "LEXSAC.png.png" : "LOGISTICOM.png";
+                // Asignación de Logo Dinámico según la Empresa del archivo
+                const imgLogo = document.getElementById('logoEmpresa');
+                if (empleado.empresa === "LEXSAC") {
+                    imgLogo.src = "LEXSAC.png.png"; 
+                } else {
+                    imgLogo.src = "LOGISTICOM.png";
+                }
 
+                // Carga de la Foto de Perfil
                 const fotoImg = document.getElementById('userFoto');
                 fotoImg.src = "FOTOS/" + empleado.dni + ".jpg";
-                
                 fotoImg.onerror = function() { 
                     this.src = 'FOTOS/default.png'; 
                 };
 
+                // Pintado de Código de Barras Real según el DNI
+                document.getElementById('barcodeImg').src = "https://bwipjs-api.metafloor.com/?bcid=code128&text=" + empleado.dni + "&scale=2&rotate=N&includetext=true";
+
+                // Lógica condicional: Mostrar sección MTC solo si su cargo contiene la palabra "conductor"
+                const bloqueMTC = document.getElementById('bloqueMTC');
                 const botonMTC = document.getElementById('linkPDF');
-                if (empleado.area.toLowerCase() === "conductor") {
+                
+                if (empleado.area.toLowerCase().includes("conductor")) {
+                    bloqueMTC.style.display = "block";
                     botonMTC.style.display = "inline-block";
                     botonMTC.href = "PDFS/" + empleado.dni + ".pdf";
+                    
+                    document.getElementById('licenciaTxt').innerText = empleado.licencia;
+                    document.getElementById('categoriaTxt').innerText = empleado.categoria;
+                    document.getElementById('expedicionTxt').innerText = empleado.expedicion;
+                    document.getElementById('venceTxt').innerText = empleado.vence;
                 } else {
+                    bloqueMTC.style.display = "none";
                     botonMTC.style.display = "none";
                 }
+
             } else {
                 document.getElementById('errorCard').style.display = "block";
             }
