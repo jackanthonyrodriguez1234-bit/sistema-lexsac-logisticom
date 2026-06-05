@@ -3,134 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Identificación Digital</title>
+    <title>Ficha de Identificación</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: white; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 100%; max-width: 410px; overflow: hidden; display: none; padding-bottom: 25px; }
-        .header-bg { background: #0A2540; color: white; text-align: center; padding: 30px 20px 80px 20px; }
-        .logo-empresa { height: 50px; background: white; padding: 8px; border-radius: 8px; margin-bottom: 10px; }
-        .titulo { font-size: 1.5rem; font-weight: 800; margin: 0; color: white; }
-        .foto-container { width: 130px; height: 130px; margin: -65px auto 15px auto; }
-        .foto-perfil { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid white; background-color: white; }
-        .info-principal { text-align: center; padding: 0 20px; }
-        .tag-area { display: inline-block; background-color: #f1f5f9; color: #4a5568; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; }
-        .seccion-datos { padding: 0 20px; margin-bottom: 15px; }
-        .seccion-titulo { font-size: 0.7rem; font-weight: 700; color: #718096; text-transform: uppercase; margin-bottom: 8px; }
-        .bloque-gris { background-color: #F8F9FA; border-radius: 15px; padding: 15px; }
-        .grid-2 { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .dato-label { font-size: 0.65rem; color: #a0aec0; text-transform: uppercase; }
-        .dato-valor { font-size: 0.85rem; color: #2d3748; font-weight: 700; }
-        .mtc-box { padding: 0 20px; margin-top: 15px; text-align: center; }
-        .btn-mtc { display: none; background-color: #e53e3e; color: white; text-decoration: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; }
-        .error-msg { color: #e53e3e; display: none; font-weight: bold; background: white; padding: 25px; border-radius: 15px; text-align: center; }
+        body { font-family: sans-serif; background: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
+        .error { color: #e53e3e; font-weight: bold; }
+        .info { text-align: left; margin-top: 20px; }
+        .campo { margin-bottom: 15px; }
+        .label { font-size: 0.8rem; color: #718096; text-transform: uppercase; }
+        .valor { font-size: 1.1rem; font-weight: bold; color: #2d3748; }
     </style>
 </head>
 <body>
 
-    <div id="errorCard" class="error-msg">Trabajador no encontrado o enlace inválido.</div>
-    <div id="personalCard" class="card">
-        <div class="header-bg">
-            <img id="logoEmpresa" src="" alt="Logo" class="logo-empresa"><br>
-            <h1 class="titulo">FICHA DE IDENTIFICACIÓN</h1>
-        </div>
-        <div class="foto-container"><img id="userFoto" src="" alt="Foto" class="foto-perfil"></div>
-        <div class="info-principal">
+    <div id="app" class="card">
+        <div id="loading">Cargando información...</div>
+        <div id="content" style="display:none;">
             <h2 id="nombreTxt"></h2>
-            <span id="areaTxt" class="tag-area"></span>
-        </div>
-        <div class="seccion-datos">
-            <div class="seccion-titulo">Datos de Identidad</div>
-            <div class="bloque-gris">
-                <div class="grid-2">
-                    <div class="dato-item"><div class="dato-label">DNI</div><div id="dniTxt" class="dato-valor"></div></div>
-                    <div class="dato-item"><div class="dato-label">Nacimiento</div><div id="nacimientoTxt" class="dato-valor"></div></div>
-                </div>
-                <div class="dato-label">Correo</div><div id="correoTxt" class="dato-valor"></div>
+            <div class="info">
+                <div class="campo"><div class="label">Área</div><div id="areaTxt" class="valor"></div></div>
+                <div class="campo"><div class="label">Empresa</div><div id="empresaTxt" class="valor"></div></div>
             </div>
         </div>
-        <div id="bloqueMTC" class="seccion-datos" style="display: none;">
-            <div class="seccion-titulo">Registro MTC</div>
-            <div class="bloque-gris">
-                <div class="grid-2">
-                    <div class="dato-item"><div class="dato-label">N° Licencia</div><div id="licenciaTxt" class="dato-valor"></div></div>
-                    <div class="dato-item"><div class="dato-label">Categoría</div><div id="categoriaTxt" class="dato-valor"></div></div>
-                </div>
-            </div>
-            <div class="mtc-box"><a id="linkPDF" href="#" target="_blank" class="btn-mtc">VER DOCUMENTO MTC</a></div>
-        </div>
+        <div id="errorMsg" class="error" style="display:none;">Trabajador no encontrado.</div>
     </div>
 
     <script>
         const personal = [
-            { dni: "9515529", nombre: "JOSE ANTONIO ALVARADO TURFO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "alvaradoturfojoseantonio119@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "76788427", nombre: "WILDER MARLON DURAND BRAVO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "wildermarlond@gmail.com", licencia: "Q76788427", categoria: "A Clase IIIc" },
-            const personal = [
-            // --- LOGISTICOM ---
-            { dni: "9515529", nombre: "JOSE ANTONIO ALVARADO TURFO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "alvaradoturfojoseantonio119@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "76788427", nombre: "WILDER MARLON DURAND BRAVO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "wildermarlond@gmail.com", licencia: "Q76788427", categoria: "A Clase IIIc" },
-            { dni: "77042708", nombre: "EMERSON OMAR MARAPARA PINEDO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "emersonmarapara192@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "47536970", nombre: "HELBERT MOZOMBITE CHOTA", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "chevymozombite@gmail.com", licencia: "Q47536970", categoria: "A Clase IIIc" },
-            { dni: "75909419", nombre: "HENRY DEREX REATEGUI PANIURIA", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "henryderexr@gmail.com", licencia: "Q75909419", categoria: "A Clase IIIc" },
-            { dni: "46395482", nombre: "EVERTH LUIS VARGAS MENDIETA", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "25/05/1990", correo: "everth.luis1990@gmail.com", licencia: "Q46395482", categoria: "A Clase IIIc" },
-            { dni: "48062167", nombre: "BRAYAN EDUARDO VASQUEZ DELGADILLO", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "bveduar96@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "41707671", nombre: "JONATHAN VENEGAS CHINCHAYAN", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "jonathansmithvenegas@gmail.com", licencia: "Q41707671", categoria: "A Clase IIIc" },
-            { dni: "45768559", nombre: "ROGER ANTONIO CAMACHO LEON", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "rogercamachole22@gmail.com", licencia: "Q45768559", categoria: "A Clase IIIc" },
-            { dni: "25841129", nombre: "DANIEL GERSON MENDOZA MORENO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "daniel.mendoza0403@gmail.com", licencia: "Q25841129", categoria: "A Clase IIIc" },
-            { dni: "43997881", nombre: "MARLON TRAUCO NOLORBE", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "marlontrauconolorbe58@gmail.com", licencia: "Q43997881", categoria: "A Clase IIIc" },
-            { dni: "41750580", nombre: "ALEX HUMBERTO BARDALES DIAZ", area: "JEFE DE Operaciones", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "74720411", nombre: "GABRIELA CUSTODIO ARONI", area: "SSOMA", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "71149176", nombre: "KENNETH JAEL FUENTES NAVARRO", area: "AREA COMERCIAL", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "41684499", nombre: "JOSE ANTONIO RIVERA URBANO", area: "Conductor", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "Q41684499", categoria: "A Clase IIIc" },
-            { dni: "77488694", nombre: "ROSA MARGARITA RODRIGUEZ YACOLCA", area: "GERENTE", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "72767435", nombre: "CARLO MARIO SALVADOR BAUTISTA", area: "ASIS. ADMINISTRATIVO", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "75793059", nombre: "JURY VIVIANA VARGAS MOZOMBITE", area: "Auxiliar", empresa: "LOGISTICOM", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-
-            // --- LEXSAC ---
-            { dni: "72325162", nombre: "ZE WRELINTON LIRA SILVANO", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "taurolira@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "76067095", nombre: "VEXLER ALEXANDER AREVALO AHUE", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "alex04arevaloahue@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "71133202", nombre: "JOSE URIEL CATASHUNGA PINCHI", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "catashungapinchiuriel@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "7162730", nombre: "JESUS EDUARDO ALACHE ALVA", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "jeal1610@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "44216410", nombre: "ARLES LIRA CARDENAS", area: "Conductor", empresa: "LEXSAC", nacimiento: "---", correo: "princilira@gmail.com", licencia: "Q44216410", categoria: "A Clase IIIc" },
-            { dni: "74690292", nombre: "LANDER OMAR PEÑA BENITES", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "landerpena817@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "75771843", nombre: "ALEGRIA CHAVEZ ALICIA DEL PILAR", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "aliciadelpilaralegria24@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "61725804", nombre: "ARIMUYA SILVANO ERBES", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "60667939", nombre: "CATASHUNGA RODRIGUEZ JACK ANTHONY", area: "ASIST. DE Operaciones", empresa: "LEXSAC", nacimiento: "22/05/2000", correo: "jackanthonyrodriguez1234@gmail.com", licencia: "---", categoria: "---" },
-            { dni: "76847595", nombre: "DIAZ MONSALVE JOSE ROGER", area: "Conductor", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "Q76847595", categoria: "A Clase IIIc" },
-            { dni: "77219118", nombre: "MARAPARA PINEDO CARLOS ABEL", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "42108352", nombre: "MURGA AYAY ELISA YUBEHT", area: "ASIST. CONTABLE", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "46998713", nombre: "RODRIGUEZ BARDALES DIANA ELVIRA", area: "ASIST. ADMINISTRATIVO", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "80124743", nombre: "RODRIGUEZ BARDALES JULIO CESAR", area: "GERENTE", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "47192206", nombre: "RODRIGUEZ BARDALES SARA ROCIO", area: "JEFE DE OPERACIONES", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" },
-            { dni: "46407053", nombre: "RODRIGUEZ BARDALES SEGUNDO ROSARIO", area: "Conductor", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "Q46407053", categoria: "A Clase IIIc" },
-            { dni: "47594889", nombre: "PEÑA BENITES JHACSON LUIS", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" }
-        ];
-            { dni: "47594889", nombre: "PEÑA BENITES JHACSON LUIS", area: "Auxiliar", empresa: "LEXSAC", nacimiento: "---", correo: "---", licencia: "---", categoria: "---" }
+            { dni: "9515529", nombre: "JOSE ANTONIO ALVARADO TURFO", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "76788427", nombre: "WILDER MARLON DURAND BRAVO", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "77042708", nombre: "EMERSON OMAR MARAPARA PINEDO", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "47536970", nombre: "HELBERT MOZOMBITE CHOTA", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "75909419", nombre: "HENRY DEREX REATEGUI PANIURIA", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "46395482", nombre: "EVERTH LUIS VARGAS MENDIETA", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "48062167", nombre: "BRAYAN EDUARDO VASQUEZ DELGADILLO", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "41707671", nombre: "JONATHAN VENEGAS CHINCHAYAN", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "45768559", nombre: "ROGER ANTONIO CAMACHO LEON", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "25841129", nombre: "DANIEL GERSON MENDOZA MORENO", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "43997881", nombre: "MARLON TRAUCO NOLORBE", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "41750580", nombre: "ALEX HUMBERTO BARDALES DIAZ", area: "JEFE DE Operaciones", empresa: "LOGISTICOM" },
+            { dni: "74720411", nombre: "GABRIELA CUSTODIO ARONI", area: "SSOMA", empresa: "LOGISTICOM" },
+            { dni: "71149176", nombre: "KENNETH JAEL FUENTES NAVARRO", area: "AREA COMERCIAL", empresa: "LOGISTICOM" },
+            { dni: "41684499", nombre: "JOSE ANTONIO RIVERA URBANO", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "77488694", nombre: "ROSA MARGARITA RODRIGUEZ YACOLCA", area: "GERENTE", empresa: "LOGISTICOM" },
+            { dni: "72767435", nombre: "CARLO MARIO SALVADOR BAUTISTA", area: "ASIS. ADMINISTRATIVO", empresa: "LOGISTICOM" },
+            { dni: "75793059", nombre: "JURY VIVIANA VARGAS MOZOMBITE", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "72325162", nombre: "ZE WRELINTON LIRA SILVANO", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "76067095", nombre: "VEXLER ALEXANDER AREVALO AHUE", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "71133202", nombre: "JOSE URIEL CATASHUNGA PINCHI", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "7162730", nombre: "JESUS EDUARDO ALACHE ALVA", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "44216410", nombre: "ARLES LIRA CARDENAS", area: "Conductor", empresa: "LEXSAC" },
+            { dni: "74690292", nombre: "LANDER OMAR PEÑA BENITES", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "75771843", nombre: "ALEGRIA CHAVEZ ALICIA DEL PILAR", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "61725804", nombre: "ARIMUYA SILVANO ERBES", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "60667939", nombre: "CATASHUNGA RODRIGUEZ JACK ANTHONY", area: "ASIST. DE Operaciones", empresa: "LEXSAC" },
+            { dni: "76847595", nombre: "DIAZ MONSALVE JOSE ROGER", area: "Conductor", empresa: "LEXSAC" },
+            { dni: "77219118", nombre: "MARAPARA PINEDO CARLOS ABEL", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "42108352", nombre: "MURGA AYAY ELISA YUBEHT", area: "ASIST. CONTABLE", empresa: "LEXSAC" },
+            { dni: "46998713", nombre: "RODRIGUEZ BARDALES DIANA ELVIRA", area: "ASIST. ADMINISTRATIVO", empresa: "LEXSAC" },
+            { dni: "80124743", nombre: "RODRIGUEZ BARDALES JULIO CESAR", area: "GERENTE", empresa: "LEXSAC" },
+            { dni: "47192206", nombre: "RODRIGUEZ BARDALES SARA ROCIO", area: "JEFE DE OPERACIONES", empresa: "LEXSAC" },
+            { dni: "46407053", nombre: "RODRIGUEZ BARDALES SEGUNDO ROSARIO", area: "Conductor", empresa: "LEXSAC" },
+            { dni: "47594889", nombre: "PEÑA BENITES JHACSON LUIS", area: "Auxiliar", empresa: "LEXSAC" }
         ];
 
-        // Lógica de carga
-        function inicializarSistema() {
+        window.onload = () => {
             const params = new URLSearchParams(window.location.search);
-            const dniCapturado = params.get('dni');
-            const empleado = personal.find(p => p.dni === dniCapturado?.trim());
-            if (empleado) {
-                document.getElementById('personalCard').style.display = "block";
-                document.getElementById('nombreTxt').innerText = empleado.nombre;
-                document.getElementById('areaTxt').innerText = empleado.area;
-                document.getElementById('dniTxt').innerText = empleado.dni;
-                document.getElementById('nacimientoTxt').innerText = empleado.nacimiento;
-                document.getElementById('correoTxt').innerText = empleado.correo;
-                document.getElementById('logoEmpresa').src = (empleado.empresa === "LEXSAC") ? "LEXSAC.png.png" : "LOGISTICOM.png";
-                document.getElementById('userFoto').src = "FOTOS/" + empleado.dni + ".jpg";
-                if (empleado.area.toLowerCase().includes("conductor")) {
-                    document.getElementById('bloqueMTC').style.display = "block";
-                    document.getElementById('linkPDF').style.display = "inline-block";
-                    document.getElementById('licenciaTxt').innerText = empleado.licencia;
-                    document.getElementById('categoriaTxt').innerText = empleado.categoria;
-                    document.getElementById('linkPDF').href = "PDFS/" + empleado.dni + ".pdf";
-                }
-            } else { document.getElementById('errorCard').style.display = "block"; }
-        }
-        window.onload = inicializarSistema;
+            const dni = params.get('dni');
+            const emp = personal.find(p => p.dni === dni?.trim());
+            document.getElementById('loading').style.display = 'none';
+            if (emp) {
+                document.getElementById('nombreTxt').innerText = emp.nombre;
+                document.getElementById('areaTxt').innerText = emp.area;
+                document.getElementById('empresaTxt').innerText = emp.empresa;
+                document.getElementById('content').style.display = 'block';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        };
     </script>
 </body>
 </html>
