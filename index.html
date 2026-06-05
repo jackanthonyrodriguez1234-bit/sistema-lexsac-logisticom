@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Fotocheck Digital</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 320px;
+            padding: 25px;
+            text-align: center;
+            display: none; /* Se muestra solo si encuentra al trabajador */
+        }
+        .logo-empresa {
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: contain;
+        }
+        .foto-perfil {
+            width: 140px;
+            height: 170px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 3px solid #003366;
+            margin-bottom: 15px;
+        }
+        h2 {
+            margin: 10px 0 5px 0;
+            color: #333;
+            font-size: 1.3em;
+        }
+        .dni {
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .area {
+            display: inline-block;
+            background-color: #003366;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        .btn-mtc {
+            display: none; /* Se activa dinámicamente solo para Conductores */
+            background-color: #d9534f;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn-mtc:hover {
+            background-color: #c9302c;
+        }
+        .error-msg {
+            color: red;
+            display: none;
+            font-weight: bold;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="errorCard" class="error-msg">Trabajador no encontrado o enlace inválido.</div>
+
+    <div id="personalCard" class="card">
+        <!-- Logo de la Empresa (Dinámico) -->
+        <img id="logoEmpresa" src="" alt="Logo Empresa" class="logo-empresa">
+        <br>
+        <!-- Foto del Trabajador o Silueta -->
+        <img id="userFoto" src="" alt="Foto Personal" class="foto-perfil">
+        
+        <!-- Datos del Personal -->
+        <h2 id="nombreTxt"></h2>
+        <p id="dniTxt" class="dni"></p>
+        <span id="areaTxt" class="area"></span>
+        
+        <br><br>
+        <!-- Botón para Licencia MTC -->
+        <a id="linkPDF" href="#" target="_blank" class="btn-mtc">VER DOCUMENTO MTC</a>
+    </div>
+
+    <script>
+        // BASE DE DATOS OFICIAL (LOGISTICOM Y LEXSAC)
+        const personal = [
+            // --- LOGISTICOM ---
+            { dni: "9515529", nombre: "JOSE ANTONIO ALVARADO TURFO", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "76788427", nombre: "WILDER MARLON DURAND BRAVO", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "77042708", nombre: "EMERSON OMAR MARAPARA PINEDO", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "47536970", nombre: "HELBERT MOZOMBITE CHOTA", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "75909419", nombre: "HENRY DEREX REATEGUI PANIURIA", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "46395482", nombre: "EVERTH LUIS VARGAS MENDIETA", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "48062167", nombre: "BRAYAN EDUARDO VASQUEZ DELGADILLO", area: "Auxiliar", empresa: "LOGISTICOM" },
+            { dni: "41707671", nombre: "JONATHAN VENEGAS CHINCHAYAN", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "45768559", nombre: "ROGER ANTONIO CAMACHO LEON", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "25841129", nombre: "DANIEL GERSON MENDOZA MORENO", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "43997881", nombre: "MARLON TRAUCO NOLORBE", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "41750580", nombre: "ALEX HUMBERTO BARDALES DIAZ", area: "Operaciones", empresa: "LOGISTICOM" },
+            { dni: "74720411", nombre: "GABRIELA CUSTODIO ARONI", area: "SSOMA", empresa: "LOGISTICOM" },
+            { dni: "71149176", nombre: "KENNETH JAEL FUENTES NAVARRO", area: "Operaciones", empresa: "LOGISTICOM" },
+            { dni: "41684499", nombre: "JOSE ANTONIO RIVERA URBANO", area: "Conductor", empresa: "LOGISTICOM" },
+            { dni: "77488694", nombre: "ROSA MARGARITA RODRIGUEZ YACOLCA", area: "Administracion", empresa: "LOGISTICOM" },
+            { dni: "72767435", nombre: "CARLO MARIO SALVADOR BAUTISTA", area: "Operaciones", empresa: "LOGISTICOM" },
+            { dni: "75793059", nombre: "JURY VIVIANA VARGAS MOZOMBITE", area: "Auxiliar", empresa: "LOGISTICOM" },
+
+            // --- LEXSAC ---
+            { dni: "72325162", nombre: "ZE WRELINTON LIRA SILVANO", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "76067095", nombre: "VEXLER ALEXANDER AREVALO AHUE", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "71133202", nombre: "JOSE URIEL CATASHUNGA PINCHI", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "7162730", nombre: "JESUS EDUARDO ALACHE ALVA", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "44216410", nombre: "ARLES LIRA CARDENAS", area: "Conductor", empresa: "LEXSAC" },
+            { dni: "74690292", nombre: "LANDER OMAR PEÑA BENITES", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "75771843", nombre: "ALEGRIA CHAVEZ ALICIA DEL PILAR", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "61725804", nombre: "ARIMUYA SILVANO ERBES", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "60667939", nombre: "JACK ANTHONY RODRIGUEZ CATASHUNGA", area: "Operaciones", empresa: "LEXSAC" },
+            { dni: "76847595", nombre: "JOSE ROGER DIAZ MONSALVE", area: "Conductor", empresa: "LEXSAC" },
+            { dni: "77219118", nombre: "MARAPARA PINEDO CARLOS ABEL", area: "Auxiliar", empresa: "LEXSAC" },
+            { dni: "42108352", nombre: "MURGA AYAY ELISA YUBEHT", area: "Operaciones", empresa: "LEXSAC" },
+            { dni: "46998713", nombre: "RODRIGUEZ BARDALES DIANA ELVIRA", area: "Operaciones", empresa: "LEXSAC" },
+            { dni: "80124743", nombre: "RODRIGUEZ BARDALES JULIO CESAR", area: "Administracion", empresa: "LEXSAC" },
+            { dni: "47192206", nombre: "RODRIGUEZ BARDALES SARA ROCIO", area: "Operaciones", empresa: "LEXSAC" },
+            { dni: "46407053", nombre: "RODRIGUEZ BARDALES SEGUNDO ROSARIO", area: "Conductor", empresa: "LEXSAC" },
+            { dni: "47594889", nombre: "PEÑA BENITES JHACSON LUIS", area: "Auxiliar", empresa: "LEXSAC" }
+        ];
+
+        function inicializarSistema() {
+            const params = new URLSearchParams(window.location.search);
+            const dniCapturado = params.get('dni');
+
+            if (!dniCapturado) {
+                document.getElementById('errorCard').style.display = "block";
+                return;
+            }
+
+            const empleado = personal.find(p => p.dni === dniCapturado.trim());
+
+            if (empleado) {
+                document.getElementById('personalCard').style.display = "block";
+                
+                document.getElementById('nombreTxt').innerText = empleado.nombre;
+                document.getElementById('dniTxt').innerText = "DNI: " + empleado.dni;
+                document.getElementById('areaTxt').innerText = empleado.area.toUpperCase();
+
+                // Se adapta dinámicamente al nombre actual de tus archivos en la barra lateral
+                document.getElementById('logoEmpresa').src = (empleado.empresa === "LEXSAC") ? "LEXSAC.png.png" : "LOGISTICOM.png";
+
+                const fotoImg = document.getElementById('userFoto');
+                fotoImg.src = "FOTOS/" + empleado.dni + ".jpg";
+                
+                fotoImg.onerror = function() { 
+                    this.src = 'FOTOS/default.png'; 
+                };
+
+                const botonMTC = document.getElementById('linkPDF');
+                if (empleado.area.toLowerCase() === "conductor") {
+                    botonMTC.style.display = "inline-block";
+                    botonMTC.href = "PDFS/" + empleado.dni + ".pdf";
+                } else {
+                    botonMTC.style.display = "none";
+                }
+            } else {
+                document.getElementById('errorCard').style.display = "block";
+            }
+        }
+
+        window.onload = inicializarSistema;
+    </script>
+</body>
+</html>
